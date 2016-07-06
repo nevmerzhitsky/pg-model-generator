@@ -46,11 +46,11 @@ function toJSON(connection, schema) {
         // Group both by 'table_schema'
         tables: _.transform(
           _.indexBy(tables.rows, 'table_name'),
-          function (result, table, name) {
+          function (result, table, tableName) {
             table = removeExcessTableFields(table)
-            result[name] = _.extend(table, {
+            result[tableName] = _.extend(table, {
               columns: _.mapValues(
-                _.indexBy(columnGroups[name], 'column_name'),
+                _.indexBy(columnGroups[tableName], 'column_name'),
                 (obj) => removeExcessColumnFields(obj)
               )
             })
@@ -59,7 +59,11 @@ function toJSON(connection, schema) {
         constraints: _.transform(
           _.groupBy(constraints.rows, 'table_name'),
           function (result, table, tableName) {
-            result[tableName] = _.groupBy(table, 'column_name')
+            result[tableName] = _.mapValues(_.groupBy(table, 'column_name'),
+                (obj) => obj.map((rec) => {
+                  return removeExcessConstraintFields(rec)
+                })
+              )
           }
         )
       }
@@ -94,6 +98,12 @@ function removeExcessColumnFields(record) {
       delete record[field]
     }
   }
+
+  return omit(keys, record)
+}
+
+function removeExcessConstraintFields(record) {
+  const keys = ['table_schema', 'table_name', 'column_name']
 
   return omit(keys, record)
 }
