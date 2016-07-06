@@ -6,7 +6,6 @@ select
   start_value,
   minimum_value,
   increment
-
 from information_schema.columns
 inner join information_schema.sequences on (
   table_schema = sequence_schema and
