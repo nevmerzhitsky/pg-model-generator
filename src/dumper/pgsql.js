@@ -3,6 +3,7 @@ const Client = pg.Client
 const Promise = require('bluebird')
 const _ = require('lodash')
 const sql = require('./sql/pg')
+const {omit} = require('ramda')
 
 module.exports = dumper
 
@@ -32,33 +33,67 @@ function toJSON(connection, schema) {
   client.connect()
 
   const queries = [
-    client.query(sql.getSequences, [schema]),
     client.query(sql.getColumns, [schema]),
     client.query(sql.getTables, [schema]),
     client.query(sql.getConstraints, [schema])
   ]
 
   return Promise.all(queries)
-    .spread(function (sequences, columns, tables, constraints) {
+    .spread(function (columns, tables, constraints) {
       const columnGroups = _.groupBy(columns.rows, 'table_name')
+
       return {
-        counts: {
-          sequences: sequences.rowCount,
-          constraints: constraints.rowCount,
-          tables: tables.rowCount,
-          columns: columns.rowCount
-        },
-        tables: _.transform(_.indexBy(tables.rows, 'table_name'), function (result, table, name) {
-          result[name] = _.extend(table, {
-            columns: _.indexBy(columnGroups[name], 'column_name')
-          })
-        }),
-        constraints: _.transform(_.groupBy(constraints.rows, 'table_name'), function (result, table, tableName) {
-          result[tableName] = _.groupBy(table, 'column_name')
-        }),
-        sequences: _.transform(_.groupBy(sequences.rows, 'table_name'), function (result, table, tableName) {
-          result[tableName] = _.indexBy(sequences.rows, 'column_name')
-        })
+        // Group both by 'table_schema'
+        tables: _.transform(
+          _.indexBy(tables.rows, 'table_name'),
+          function (result, table, name) {
+            table = removeExcessTableFields(table)
+            result[name] = _.extend(table, {
+              columns: _.mapValues(
+                _.indexBy(columnGroups[name], 'column_name'),
+                (obj) => removeExcessColumnFields(obj)
+              )
+            })
+          }
+        ),
+        constraints: _.transform(
+          _.groupBy(constraints.rows, 'table_name'),
+          function (result, table, tableName) {
+            result[tableName] = _.groupBy(table, 'column_name')
+          }
+        )
       }
     })
+}
+
+function removeExcessTableFields(record) {
+  const keys = ['table_schema', 'table_name']
+
+  for (let field of Object.keys(record)) {
+    if (null === record[field]) {
+      delete record[field]
+    }
+  }
+
+  return omit(keys, record)
+}
+
+function removeExcessColumnFields(record) {
+  const keys = ['table_schema', 'table_name', 'column_name']
+
+  // Skip default values of properties.
+  if (true === record.is_nullable) {
+    delete record.is_nullable
+  }
+  if ('pg_catalog' === record.udt_schema) {
+    delete record.udt_schema
+  }
+
+  for (let field of Object.keys(record)) {
+    if (null === record[field]) {
+      delete record[field]
+    }
+  }
+
+  return omit(keys, record)
 }
