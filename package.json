@@ -1,0 +1,35 @@
+{
+  "name": "pg-model-generator",
+  "version": "1.0.0",
+  "description": "Generator of PHP 5 classes from PostgreSQL tables schema.",
+  "main": "index.js",
+  "dependencies": {
+    "co": "^4.6.0",
+    "faucet": "0.0.1",
+    "pg": "^6.0.1",
+    "pg-json-schema-export": "^0.13.7",
+    "q": "^1.4.1",
+    "ramda": "^0.21.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "generate": "node ./src/index.js",
+    "test": "node ./test/unit/run.js | faucet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nevmerzhitsky/pg-model-generator.git"
+  },
+  "keywords": [
+    "postgresql",
+    "php",
+    "php5",
+    "model"
+  ],
+  "author": "Sergey Nevmerzhitsky <sergey.nevmerzhitsky@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nevmerzhitsky/pg-model-generator/issues"
+  },
+  "homepage": "https://github.com/nevmerzhitsky/pg-model-generator#readme"
+}
