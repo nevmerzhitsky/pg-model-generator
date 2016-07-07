@@ -1,5 +1,3 @@
-//const {asyncPipe} = require('../ramda-promise.js')
-const {nfcall} = require('q')
 const fs = require('fs')
 
 module.exports = dumper
@@ -11,10 +9,10 @@ function dumper(jsonPath, type, creds, proxy = {}) {
 }
 
 function dumpJson(type, creds, proxy) {
-  return require('./pgsql.js')(creds, proxy)
+  return require(`./${type}.js`)(creds, proxy)
 }
 
 function saveJson(jsonPath, data) {
-  return nfcall(fs.writeFile, jsonPath, JSON.stringify(data))
-    .then(console.log(`JSON dump saved to ${jsonPath}`))
+  fs.writeFileSync(jsonPath, JSON.stringify(data))
+  console.log(`JSON dump saved to ${jsonPath}`)
 }

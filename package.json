@@ -4,11 +4,10 @@
   "description": "Generator of PHP 5 classes from PostgreSQL tables schema.",
   "main": "index.js",
   "dependencies": {
-    "co": "^4.6.0",
+    "bluebird": "^3.4.1",
     "faucet": "0.0.1",
+    "lodash": "^4.13.1",
     "pg": "^6.0.1",
-    "pg-json-schema-export": "^0.13.7",
-    "q": "^1.4.1",
     "ramda": "^0.21.0"
   },
   "devDependencies": {},

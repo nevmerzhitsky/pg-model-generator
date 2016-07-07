@@ -34,17 +34,18 @@ function toJSON(connection, schema) {
 
   return Promise.all(queries)
     .spread(function (columns, tables, constraints) {
+      client.end((err) => { if (err) throw err })
       const columnGroups = _.groupBy(columns.rows, 'table_name')
 
       return {
         // Group both by 'table_schema'
         tables: _.transform(
-          _.indexBy(tables.rows, 'table_name'),
+          _.keyBy(tables.rows, 'table_name'),
           function (result, table, tableName) {
             table = removeExcessTableFields(table)
             result[tableName] = _.extend(table, {
               columns: _.mapValues(
-                _.indexBy(columnGroups[tableName], 'column_name'),
+                _.keyBy(columnGroups[tableName], 'column_name'),
                 (obj) => removeExcessColumnFields(obj)
               )
             })
