@@ -9,12 +9,6 @@ module.exports = dumper
 
 function dumper(creds, proxy) {
   return toJSON(mapConfig(creds), 'public')
-    .then(function (schemas) {
-      return schemas
-    })
-    .catch(function (error) {
-      throw Error(error)
-    })
 }
 
 function mapConfig(creds) {
@@ -60,10 +54,10 @@ function toJSON(connection, schema) {
           _.groupBy(constraints.rows, 'table_name'),
           function (result, table, tableName) {
             result[tableName] = _.mapValues(_.groupBy(table, 'column_name'),
-                (obj) => obj.map((rec) => {
-                  return removeExcessConstraintFields(rec)
-                })
-              )
+              (obj) => obj.map((rec) => {
+                return removeExcessConstraintFields(rec)
+              })
+            )
           }
         )
       }

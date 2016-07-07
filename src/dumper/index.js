@@ -1,18 +1,20 @@
 //const {asyncPipe} = require('../ramda-promise.js')
+const {nfcall} = require('q')
 const fs = require('fs')
 
 module.exports = dumper
 
 function dumper(jsonPath, type, creds, proxy = {}) {
-  factory(type, creds, proxy).then(
-    (data) => handler(jsonPath, data)
+  return dumpJson(type, creds, proxy).then(
+    data => saveJson(jsonPath, data)
   )
 }
 
-function factory(type, creds, proxy) {
+function dumpJson(type, creds, proxy) {
   return require('./pgsql.js')(creds, proxy)
 }
 
-function handler(jsonPath, data) {
-  fs.writeFileSync(jsonPath, JSON.stringify(data))
+function saveJson(jsonPath, data) {
+  return nfcall(fs.writeFile, jsonPath, JSON.stringify(data))
+    .then(console.log(`JSON dump saved to ${jsonPath}`))
 }
