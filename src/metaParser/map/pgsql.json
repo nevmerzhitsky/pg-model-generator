@@ -1,5 +1,11 @@
 {
-    "datatype": {
+    "fieldsMap": {
+        "dataType": "data_type",
+        "udtName": "udt_name",
+        "notNull": "!is_nullable",
+        "default": "column_default"
+    },
+    "dataType": {
         "staticMatch": {
         }
     }

@@ -14,11 +14,18 @@ function metaparser(json, type) {
 
     for (let column of Object.keys(tableData.columns)) {
       const columnData = tableData.columns[column]
-      const rec = result[table][column] = {}
+      const rec = result[table][column] = {
+        dataType: null,
+        udtName: null,
+        notNull: false,
+        "default": null
+      }
 
-      rec.dataType = columnData.data_type
-      if (typeof staticMap.datatype.staticMatch[rec.dataType] !== 'undefined') {
-        rec.dataType = staticMap.datatype.staticMatch[rec.dataType]
+      fillFields(rec, staticMap.fieldsMap, columnData)
+
+      //rec.dataType = columnData.data_type
+      if (typeof staticMap.dataType.staticMatch[rec.dataType] !== 'undefined') {
+        rec.dataType = staticMap.dataType.staticMatch[rec.dataType]
       }
     }
   }
@@ -38,10 +45,15 @@ function initByUserDefined() {
   
 }
 
-function createMapper(staticMap) {
-  let result = {
-    
-  }
+function fillFields(rec, fieldsMap, columnData) {
+  for (let field of Object.keys(fieldsMap)) {
+    const driverField = fieldsMap[field]
+    const inversion = (driverField.charAt(0) === '!')
+    const driverClearField = !inversion ? driverField : driverField.substr(1)
 
-  return result
+    rec[field] = columnData[driverClearField]
+    if (inversion) {
+      rec[field] = !Boolean(rec[field])
+    }
+  }
 }
