@@ -8,6 +8,19 @@ function metaparser(json, type) {
 
   for (let table of Object.keys(json.tables)) {
     console.log('table', table)
+    const tableData = json.tables[table]
+
+    result[table] = {}
+
+    for (let column of Object.keys(tableData.columns)) {
+      const columnData = tableData.columns[column]
+      const rec = result[table][column] = {}
+
+      rec.dataType = columnData.data_type
+      if (typeof staticMap.datatype.staticMatch[rec.dataType] !== 'undefined') {
+        rec.dataType = staticMap.datatype.staticMatch[rec.dataType]
+      }
+    }
   }
 
   return result
