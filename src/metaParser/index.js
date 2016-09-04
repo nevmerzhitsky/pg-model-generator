@@ -7,14 +7,14 @@ function metaparser(json, type) {
   let result = {}
 
   for (let table of Object.keys(json.tables)) {
-    console.log('table', table)
+    //console.log('table', table)
     const tableData = json.tables[table]
 
     result[table] = {}
 
     for (let column of Object.keys(tableData.columns)) {
       const columnData = tableData.columns[column]
-      const rec = result[table][column] = {
+      let rec = result[table][column] = {
         dataType: null,
         udtName: null,
         notNull: false,
@@ -42,12 +42,13 @@ function initByStatic(mapType) {
 }
 
 function initByUserDefined() {
-  
+
 }
 
 function fillFields(rec, fieldsMap, columnData) {
   for (let field of Object.keys(fieldsMap)) {
     const driverField = fieldsMap[field]
+    // @TODO Parse !! at start of name?
     const inversion = (driverField.charAt(0) === '!')
     const driverClearField = !inversion ? driverField : driverField.substr(1)
 
