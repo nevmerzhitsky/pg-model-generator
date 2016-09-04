@@ -9,6 +9,7 @@ function dumper(jsonPath, type, creds, proxy = {}) {
 }
 
 function dumpJson(type, creds, proxy) {
+  // @TODO Dump length of field
   return require(`./${type}.js`)(creds, proxy)
 }
 

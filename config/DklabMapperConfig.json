@@ -1,0 +1,29 @@
+{
+  "id_field": "Mapper_Type_Identifier",
+  "dataTypeMap": {
+    "numeric": "new DB_Type_Numeric()",
+    "interval": "DB_Type_String",
+    "integer": "DB_Type_Int",
+    "smallint": "DB_Type_Int",
+    "boolean": "DB_Type_Pgsql_Boolean",
+    "character varying": "DB_Type_String",
+    "_hstore (array)": "DB_Type_Pgsql_Hstore",
+    "hstore (not array)": "DB_Type_Pgsql_Hstore",
+    "hstore (sometimes)": "DB_Type_Pgsql_HstoreProperties",
+    "bytea": "DB_Type_Pgsql_Bytea",
+    "timestamp with time zone": "DB_Type_String",
+    "timestamp without time zone": "DB_Type_Timestamp",
+    "date": "DB_Type_Date"
+  },
+  "wrappers": {
+    "empty_to_null": "DB_Type_Wrapper_EmptyToNull",
+    "empty_to_default": "DB_Type_Wrapper_EmptyToDefault",
+    "empty_to_null": "DB_Type_Wrapper_EmptyToNull",
+    "null_to_default": "DB_Type_Wrapper_NullToDefault",
+    "trim": "DB_Type_Wrapper_Trim",
+    "zero_to_null": "DB_Type_Wrapper_ZeroToNull"
+  },
+  "containers": {
+    "array": "DB_Type_Pgsql_Array"
+  }
+}
